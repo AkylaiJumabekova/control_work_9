@@ -4,10 +4,12 @@ import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { fetchTransactions, deleteTransaction } from '../store/transactionsThunks';
 import dayjs from 'dayjs';
 import ConfirmModal from '../components/Modal/ConfirmModal';
+import AddTransactionModal from '../components/Modal/AddTransactionModal';
 
 const Home: React.FC = () => {
     const dispatch = useAppDispatch();
     const transactions = useAppSelector(state => state.transactions.items);
+    const [showAddModal, setShowAddModal] = useState(false);
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [transactionIdToDelete, setTransactionIdToDelete] = useState<string | null>(null);
 
@@ -43,6 +45,9 @@ const Home: React.FC = () => {
             </div>
             <div>
                 <h3>Transactions</h3>
+                <button className="btn btn-primary mb-2" onClick={() => setShowAddModal(true)}>
+                    Add Transaction
+                </button>
                 <ul className="list-group">
                     {transactions.map((transaction: any) => (
                         <li key={transaction.id} className="list-group-item d-flex justify-content-between align-items-center">
@@ -56,6 +61,7 @@ const Home: React.FC = () => {
                     ))}
                 </ul>
             </div>
+            <AddTransactionModal show={showAddModal} onClose={() => setShowAddModal(false)} />
             <ConfirmModal
                 show={showConfirmModal}
                 title="Confirm Delete"

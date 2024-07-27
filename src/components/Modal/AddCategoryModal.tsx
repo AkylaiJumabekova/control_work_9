@@ -35,7 +35,7 @@ const AddCategoryModal: React.FC<Props> = ({ show, onClose, category }) => {
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         const newCategory: Category = {
-            id: category ? category.id : Math.random().toString(36).substr(2, 9),
+            id: category ? category.id : Date.now().toString(),
             name,
             type,
         };

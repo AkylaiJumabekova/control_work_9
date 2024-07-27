@@ -41,16 +41,13 @@ const Home: React.FC = () => {
         setShowAddEditModal(true);
     };
 
-    let totalIncome = 0;
-    let totalExpense = 0;
+    const totalIncome = transactions.reduce((total, transaction) => {
+        return transaction.type === 'income' ? total + transaction.amount : total;
+    }, 0);
 
-    transactions.forEach(transaction => {
-        if (transaction.type === 'income') {
-            totalIncome += transaction.amount;
-        } else if (transaction.type === 'expense') {
-            totalExpense += transaction.amount;
-        }
-    });
+    const totalExpense = transactions.reduce((total, transaction) => {
+        return transaction.type === 'expense' ? total + transaction.amount : total;
+    }, 0);
 
     const totalAmount = totalIncome - totalExpense;
 
@@ -67,7 +64,7 @@ const Home: React.FC = () => {
                 <ul className="list-group">
                     {transactions.map((transaction: any) => (
                         <li key={transaction.id} className="list-group-item d-flex justify-content-between align-items-center">
-                            <span>{dayjs(transaction.createdAt).toString()}</span>
+                            <span>{dayjs(transaction.createdAt).format('DD.MM.YYYY HH:mm:ss')}</span>
                             <span>{transaction.category}</span>
                             <span className={transaction.type === 'income' ? 'text-success' : 'text-danger'}>
                                 {transaction.type === 'income' ? '+' : '-'}{transaction.amount} KGS

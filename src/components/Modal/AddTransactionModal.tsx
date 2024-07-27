@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { addTransaction, updateTransaction } from '../../store/transactionsThunks';
+import { addTransaction } from '../../store/transactionsThunks';
 import { fetchCategories } from '../../store/categoriesThunks';
 import Modal from './Modal';
 import { Category } from '../../types';
@@ -49,18 +49,14 @@ const AddTransactionModal: React.FC<Props> = ({ show, onClose, transaction }) =>
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         const newTransaction = {
-            id: transaction ? transaction.id : Math.random().toString(36).substr(2, 9),
+            id: transaction ? transaction.id : Date.now().toString(),
             category,
             amount,
             type,
-            createdAt: transaction ? transaction.createdAt : new Date().toString(),
+            createdAt: transaction ? transaction.createdAt : new Date().toISOString()
         };
         try {
-            if (transaction) {
-                await dispatch(updateTransaction(newTransaction)).unwrap();
-            } else {
-                await dispatch(addTransaction(newTransaction)).unwrap();
-            }
+            await dispatch(addTransaction(newTransaction)).unwrap();
             onClose();
         } catch (error) {
             console.error('Failed to save transaction:', error);
@@ -90,8 +86,8 @@ const AddTransactionModal: React.FC<Props> = ({ show, onClose, transaction }) =>
                         value={category}
                         onChange={handleCategoryChange}
                     >
-                        {categories.filter((cat: Category) => cat.type === type).map((cat: Category) => (
-                            <option key={cat.id} value={cat.id}>{cat.name}</option>
+                        {categories.map((cat: Category) => (
+                            cat.type === type && <option key={cat.id} value={cat.id}>{cat.name}</option>
                         ))}
                     </select>
                 </div>

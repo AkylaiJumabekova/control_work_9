@@ -12,7 +12,7 @@ const Home: React.FC = () => {
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [showAddEditModal, setShowAddEditModal] = useState(false);
     const [transactionIdToDelete, setTransactionIdToDelete] = useState<string | null>(null);
-    const [selectedTransaction, setSelectedTransaction] = useState<any | null>(null);
+    const [selectedTransaction, setSelectedTransaction] = useState< null>(null);
 
     useEffect(() => {
         dispatch(fetchTransactions());
@@ -36,7 +36,7 @@ const Home: React.FC = () => {
         setShowConfirmModal(false);
     };
 
-    const handleAddEditClick = (transaction?: any) => {
+    const handleAddEditClick = (transaction?:any ) => {
         setSelectedTransaction(transaction || null);
         setShowAddEditModal(true);
     };
@@ -53,16 +53,18 @@ const Home: React.FC = () => {
 
     return (
         <Layout>
-            <h1>Personal Budget</h1>
-            <div>
+            <div className="summary-container">
                 <h2>Total: {totalAmount} KGS</h2>
                 <h4>Income: {totalIncome} KGS</h4>
                 <h4>Expense: {totalExpense} KGS</h4>
             </div>
+            <button className="btn btn-primary mb-2" onClick={() => handleAddEditClick()}>
+                Add Transaction
+            </button>
             <div>
                 <h3>Transactions</h3>
                 <ul className="list-group">
-                    {transactions.map((transaction: any) => (
+                    {transactions.map((transaction) => (
                         <li key={transaction.id} className="list-group-item d-flex justify-content-between align-items-center">
                             <span>{dayjs(transaction.createdAt).format('DD.MM.YYYY HH:mm:ss')}</span>
                             <span>{transaction.category}</span>

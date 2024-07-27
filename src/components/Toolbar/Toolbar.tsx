@@ -15,9 +15,6 @@ const Toolbar: React.FC = () => {
                         </NavLink>
                     </li>
                     <li className="nav-item">
-                        <button className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTransactionModal">Add Transaction</button>
-                    </li>
-                    <li className="nav-item">
                         <NavLink to="/categories" className="nav-link">
                             Categories
                         </NavLink>

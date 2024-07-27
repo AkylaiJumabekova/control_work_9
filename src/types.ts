@@ -9,3 +9,17 @@ export interface CategoriesState {
     isLoading: boolean;
     isAdding: boolean;
 }
+
+export interface Transaction {
+    id: string;
+    category: string;
+    amount: number;
+    type: 'income' | 'expense';
+    createdAt: string;
+}
+
+export interface TransactionsState {
+    items: Transaction[];
+    isLoading: boolean;
+    isAdding: boolean;
+}

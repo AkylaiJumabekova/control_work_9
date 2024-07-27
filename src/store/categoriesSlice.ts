@@ -1,6 +1,6 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { CategoriesState } from '../types';
-import { fetchCategories, addCategory } from './categoriesThunks';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { CategoriesState, Category } from '../types';
+import { fetchCategories, addCategory, deleteCategory } from './categoriesThunks';
 
 const initialState: CategoriesState = {
     items: [],
@@ -17,7 +17,7 @@ const categoriesSlice = createSlice({
             .addCase(fetchCategories.pending, (state) => {
                 state.isLoading = true;
             })
-            .addCase(fetchCategories.fulfilled, (state, action) => {
+            .addCase(fetchCategories.fulfilled, (state, action: PayloadAction<Category[]>) => {
                 state.isLoading = false;
                 state.items = action.payload;
             })
@@ -27,12 +27,18 @@ const categoriesSlice = createSlice({
             .addCase(addCategory.pending, (state) => {
                 state.isAdding = true;
             })
-            .addCase(addCategory.fulfilled, (state, action) => {
+            .addCase(addCategory.fulfilled, (state, action: PayloadAction<Category>) => {
                 state.isAdding = false;
-                state.items.push(action.payload); 
+                state.items.push(action.payload);
             })
             .addCase(addCategory.rejected, (state) => {
                 state.isAdding = false;
+            })
+            .addCase(deleteCategory.fulfilled, (state, action: PayloadAction<string>) => {
+                const index = state.items.findIndex(category => category.id === action.payload);
+                if (index !== -1) {
+                    state.items.splice(index, 1);
+                }
             });
     },
 });

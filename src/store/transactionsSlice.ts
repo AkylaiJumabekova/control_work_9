@@ -1,42 +1,46 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-interface Transaction {
-    id: string;
-    category: string;
-    amount: number;
-    createdAt: string;
-}
-
-export interface TransactionsState {
-    items: Transaction[];
-}
+import { Transaction, TransactionsState } from '../types';
+import { fetchTransactions, addTransaction, deleteTransaction } from './transactionsThunks';
 
 const initialState: TransactionsState = {
     items: [],
+    isLoading: false,
+    isAdding: false,
 };
 
 const transactionsSlice = createSlice({
     name: 'transactions',
     initialState,
-    reducers: {
-        addTransaction: (state, action: PayloadAction<Transaction>) => {
-            state.items.push(action.payload);
-        },
-        updateTransaction: (state, action: PayloadAction<Transaction>) => {
-            const index = state.items.findIndex((transaction) => transaction.id === action.payload.id);
-            if (index !== -1) {
-                state.items[index] = action.payload;
-            }
-        },
-        deleteTransaction: (state, action: PayloadAction<string>) => {
-            const index = state.items.findIndex((transaction) => transaction.id === action.payload);
-            if (index !== -1) {
-                state.items.splice(index, 1);
-            }
-        },
+    reducers: {},
+    extraReducers: (builder) => {
+        builder
+            .addCase(fetchTransactions.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(fetchTransactions.fulfilled, (state, action: PayloadAction<Transaction[]>) => {
+                state.isLoading = false;
+                state.items = action.payload;
+            })
+            .addCase(fetchTransactions.rejected, (state) => {
+                state.isLoading = false;
+            })
+            .addCase(addTransaction.pending, (state) => {
+                state.isAdding = true;
+            })
+            .addCase(addTransaction.fulfilled, (state, action: PayloadAction<Transaction>) => {
+                state.isAdding = false;
+                state.items.push(action.payload);
+            })
+            .addCase(addTransaction.rejected, (state) => {
+                state.isAdding = false;
+            })
+            .addCase(deleteTransaction.fulfilled, (state, action: PayloadAction<string>) => {
+                const index = state.items.findIndex(transaction => transaction.id === action.payload);
+                if (index !== -1) {
+                    state.items.splice(index, 1);
+                }
+            });
     },
 });
-
-export const { addTransaction, updateTransaction, deleteTransaction } = transactionsSlice.actions;
 
 export default transactionsSlice.reducer;

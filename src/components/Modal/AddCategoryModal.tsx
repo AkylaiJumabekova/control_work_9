@@ -1,17 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAppDispatch } from '../../app/hooks';
-import { addCategory } from '../../store/categoriesThunks';
+import { addCategory, updateCategory } from '../../store/categoriesThunks';
 import Modal from './Modal';
+import { Category } from '../../types';
 
 interface Props {
     show: boolean;
     onClose: () => void;
+    category?: Category | null;
 }
 
-const AddCategoryModal: React.FC<Props> = ({ show, onClose }) => {
+const AddCategoryModal: React.FC<Props> = ({ show, onClose, category }) => {
     const dispatch = useAppDispatch();
     const [name, setName] = useState('');
     const [type, setType] = useState<'income' | 'expense'>('income');
+
+    useEffect(() => {
+        if (category) {
+            setName(category.name);
+            setType(category.type);
+        } else {
+            setName('');
+            setType('income');
+        }
+    }, [category]);
 
     const handleTypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const value = event.target.value;
@@ -22,17 +34,21 @@ const AddCategoryModal: React.FC<Props> = ({ show, onClose }) => {
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        const newCategory = { id: Date.now().toString(), name, type };
+        const newCategory = { id: category ? category.id : Date.now().toString(), name, type };
         try {
-            await dispatch(addCategory(newCategory)).unwrap();
+            if (category) {
+                await dispatch(updateCategory(newCategory)).unwrap();
+            } else {
+                await dispatch(addCategory(newCategory)).unwrap();
+            }
             onClose();
         } catch (error) {
-            console.error('Failed to add category:', error);
+            console.error('Failed to save category:', error);
         }
     };
 
     return (
-        <Modal show={show} title="Add Category" onClose={onClose}>
+        <Modal show={show} title={category ? "Edit Category" : "Add Category"} onClose={onClose}>
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label htmlFor="name">Name</label>
@@ -57,7 +73,7 @@ const AddCategoryModal: React.FC<Props> = ({ show, onClose }) => {
                     </select>
                 </div>
                 <button type="submit" className="btn btn-primary mt-2">
-                    Add
+                    {category ? "Save" : "Add"}
                 </button>
             </form>
         </Modal>

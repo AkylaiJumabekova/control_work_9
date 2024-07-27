@@ -24,3 +24,19 @@ export const addCategory = createAsyncThunk<Category, Category, { state: RootSta
         return { ...category, id: response.data.name };
     }
 );
+
+export const updateCategory = createAsyncThunk<Category, Category, { state: RootState }>(
+    'categories/updateCategory',
+    async (category) => {
+        await axiosApi.put(`/categories/${category.id}.json`, category);
+        return category;
+    }
+);
+
+export const deleteCategory = createAsyncThunk<string, string, { state: RootState }>(
+    'categories/deleteCategory',
+    async (categoryId) => {
+        await axiosApi.delete(`/categories/${categoryId}.json`);
+        return categoryId;
+    }
+);

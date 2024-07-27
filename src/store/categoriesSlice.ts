@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { CategoriesState, Category } from '../types';
-import { fetchCategories, addCategory, deleteCategory } from './categoriesThunks';
+import { fetchCategories, addCategory, updateCategory, deleteCategory } from './categoriesThunks';
 
 const initialState: CategoriesState = {
     items: [],
@@ -33,6 +33,12 @@ const categoriesSlice = createSlice({
             })
             .addCase(addCategory.rejected, (state) => {
                 state.isAdding = false;
+            })
+            .addCase(updateCategory.fulfilled, (state, action: PayloadAction<Category>) => {
+                const index = state.items.findIndex(category => category.id === action.payload.id);
+                if (index !== -1) {
+                    state.items[index] = action.payload;
+                }
             })
             .addCase(deleteCategory.fulfilled, (state, action: PayloadAction<string>) => {
                 const index = state.items.findIndex(category => category.id === action.payload);

@@ -12,7 +12,7 @@ const Home: React.FC = () => {
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [showAddEditModal, setShowAddEditModal] = useState(false);
     const [transactionIdToDelete, setTransactionIdToDelete] = useState<string | null>(null);
-    const [selectedTransaction, setSelectedTransaction] = useState< null>(null);
+    const [selectedTransaction, setSelectedTransaction] = useState<null>(null);
 
     useEffect(() => {
         dispatch(fetchTransactions());
@@ -36,7 +36,7 @@ const Home: React.FC = () => {
         setShowConfirmModal(false);
     };
 
-    const handleAddEditClick = (transaction?:any ) => {
+    const handleAddEditClick = (transaction?: any) => {
         setSelectedTransaction(transaction || null);
         setShowAddEditModal(true);
     };

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { addTransaction } from '../../store/transactionsThunks';
+import { addTransaction, updateTransaction } from '../../store/transactionsThunks';
 import { fetchCategories } from '../../store/categoriesThunks';
 import Modal from './Modal';
 import { Category } from '../../types';
@@ -56,7 +56,11 @@ const AddTransactionModal: React.FC<Props> = ({ show, onClose, transaction }) =>
             createdAt: transaction ? transaction.createdAt : new Date().toISOString()
         };
         try {
-            await dispatch(addTransaction(newTransaction)).unwrap();
+            if (transaction) {
+                await dispatch(updateTransaction(newTransaction)).unwrap();
+            } else {
+                await dispatch(addTransaction(newTransaction)).unwrap();
+            }
             onClose();
         } catch (error) {
             console.error('Failed to save transaction:', error);

@@ -3,13 +3,12 @@ import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { addTransaction, updateTransaction } from '../../store/transactionsThunks';
 import { fetchCategories } from '../../store/categoriesThunks';
 import Modal from './Modal';
-import { Category, Transaction } from '../../types';
-import dayjs from 'dayjs';
+import { Category } from '../../types';
 
 interface Props {
     show: boolean;
     onClose: () => void;
-    transaction?: Transaction | null;
+    transaction?: any;
 }
 
 const AddTransactionModal: React.FC<Props> = ({ show, onClose, transaction }) => {
@@ -49,12 +48,12 @@ const AddTransactionModal: React.FC<Props> = ({ show, onClose, transaction }) =>
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        const newTransaction: Transaction = {
+        const newTransaction = {
             id: transaction ? transaction.id : Math.random().toString(36).substr(2, 9),
             category,
             amount,
             type,
-            createdAt: transaction ? transaction.createdAt : dayjs().format('YYYY-MM-DDTHH:mm:ss[Z]'),
+            createdAt: transaction ? transaction.createdAt : new Date().toString(),
         };
         try {
             if (transaction) {
@@ -91,8 +90,8 @@ const AddTransactionModal: React.FC<Props> = ({ show, onClose, transaction }) =>
                         value={category}
                         onChange={handleCategoryChange}
                     >
-                        {categories.map((cat: Category) => (
-                            cat.type === type && <option key={cat.id} value={cat.id}>{cat.name}</option>
+                        {categories.filter((cat: Category) => cat.type === type).map((cat: Category) => (
+                            <option key={cat.id} value={cat.id}>{cat.name}</option>
                         ))}
                     </select>
                 </div>

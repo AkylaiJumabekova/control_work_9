@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { addTransaction } from '../../store/transactionsThunks';
+import { addTransaction, updateTransaction } from '../../store/transactionsThunks';
 import { fetchCategories } from '../../store/categoriesThunks';
 import Modal from './Modal';
-import { Category } from '../../types';
+import { Category, Transaction } from '../../types';
 import dayjs from 'dayjs';
 
 interface Props {
     show: boolean;
     onClose: () => void;
-    transaction?: any;
+    transaction?: Transaction | null;
 }
 
 const AddTransactionModal: React.FC<Props> = ({ show, onClose, transaction }) => {
@@ -49,19 +49,19 @@ const AddTransactionModal: React.FC<Props> = ({ show, onClose, transaction }) =>
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        const id = transaction ? transaction.id : Math.random().toString(36).substr(2, 9);
-        const createdAt = transaction ? transaction.createdAt : dayjs().format('YYYY-MM-DDTHH:mm:ss[Z]');
-
-        const newTransaction = {
-            id,
+        const newTransaction: Transaction = {
+            id: transaction ? transaction.id : Math.random().toString(36).substr(2, 9),
             category,
             amount,
             type,
-            createdAt
+            createdAt: transaction ? transaction.createdAt : dayjs().format('YYYY-MM-DDTHH:mm:ss[Z]'),
         };
-
         try {
-            await dispatch(addTransaction(newTransaction)).unwrap();
+            if (transaction) {
+                await dispatch(updateTransaction(newTransaction)).unwrap();
+            } else {
+                await dispatch(addTransaction(newTransaction)).unwrap();
+            }
             onClose();
         } catch (error) {
             console.error('Failed to save transaction:', error);
@@ -91,12 +91,9 @@ const AddTransactionModal: React.FC<Props> = ({ show, onClose, transaction }) =>
                         value={category}
                         onChange={handleCategoryChange}
                     >
-                        {categories.map((cat: Category) => {
-                            if (cat.type === type) {
-                                return <option key={cat.id} value={cat.id}>{cat.name}</option>;
-                            }
-                            return null;
-                        })}
+                        {categories.map((cat: Category) => (
+                            cat.type === type && <option key={cat.id} value={cat.id}>{cat.name}</option>
+                        ))}
                     </select>
                 </div>
                 <div className="form-group">

@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Transaction, TransactionsState } from '../types';
-import { fetchTransactions, addTransaction, deleteTransaction } from './transactionsThunks';
+import { fetchTransactions, addTransaction, updateTransaction, deleteTransaction } from './transactionsThunks';
 
 const initialState: TransactionsState = {
     items: [],
@@ -33,6 +33,12 @@ const transactionsSlice = createSlice({
             })
             .addCase(addTransaction.rejected, (state) => {
                 state.isAdding = false;
+            })
+            .addCase(updateTransaction.fulfilled, (state, action: PayloadAction<Transaction>) => {
+                const index = state.items.findIndex(transaction => transaction.id === action.payload.id);
+                if (index !== -1) {
+                    state.items[index] = action.payload;
+                }
             })
             .addCase(deleteTransaction.fulfilled, (state, action: PayloadAction<string>) => {
                 const index = state.items.findIndex(transaction => transaction.id === action.payload);

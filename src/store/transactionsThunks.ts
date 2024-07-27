@@ -25,6 +25,14 @@ export const addTransaction = createAsyncThunk<Transaction, Transaction, { state
     }
 );
 
+export const updateTransaction = createAsyncThunk<Transaction, Transaction, { state: RootState }>(
+    'transactions/updateTransaction',
+    async (transaction) => {
+        await axiosApi.put(`/transactions/${transaction.id}.json`, transaction);
+        return transaction;
+    }
+);
+
 export const deleteTransaction = createAsyncThunk<string, string, { state: RootState }>(
     'transactions/deleteTransaction',
     async (transactionId) => {
